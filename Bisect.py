@@ -3,77 +3,99 @@ import math
 import numpy as np
 import matplotlib.pyplot as plt
 
-# An example function whose
-# solution is determined using
-# Bisection Method.
-# The function is x^3 - x^2  + 2
+''' 
+Código de implementação da função de bisseção em python
+A função é x^3 - x^2 + 2
+'''
 
 class Bisect_class:
 
     def __init__(self, data, n):
         self.n = n
         self.data = data
-        self.bisection()
-        self.plot_func()
         self.bis_array = []
         self.tol_array = []
+        self.n_array = []
+        self.middle_array = []
+        self.a_array = []
+        self.b_array = []
+        self.matrix = []
+        self.fx_array = []
+        self.epsilon_array = [0]
+        self.bisection()
+        self.trans_matrix()
+        self.plot_func()
+
+        
     def func(self, x): 
 
-        return  x**3 - x**2 + 20
+        return  x**2 -3
     
-    # Prints root of func(x)
-    # with error of EPSILON
     def bisection(self):
     
         if (self.func(self.data[0]) * self.func(self.data[1]) >= 0):
-            print("You have not assumed right a and b\n")
+            print("a e b determinandos incorretamente\n")
             return
         
         middle = self.data[0]
-        array = []
-        middle_array = []
+        tol_array = []
+        n_array = []
         for p in range(1, self.n+1):
+            self.n_array.append(p)
+
+            #calculo da tolerancia
             tol = 1 * math.pow(10, -p)
-            #print(tol)
-            array.append(tol)
-            #print(array)
+            tol_array.append(tol)
+
+            #verificação da tolerancia
             while ((self.data[1]-self.data[0]) >= tol):
         
-                # Find middle point
+                # encontra ponto médio
                 middle = (self.data[0]+self.data[1])/2
                 
 
-                # Check if middle point is root
+                # verifica se ponto médio é raiz
                 if (self.func(middle) == 0.0):
                     break
         
-                # Decide the side to repeat the steps
+                # Verifica onde repete os passos
                 if (self.func(middle)*self.func(self.data[0]) < 0):
                     self.data[1] = middle
                 else:
                     self.data[0] = middle
-            middle_array.append(middle)      
+                
+
+                #Preparação dos arrays para impressão da matriz
+                self.a_array.append(self.data[0])
+                self.b_array.append(self.data[1])
+            self.middle_array.append(middle)
+            if p != 1:
+                self.epsilon_array.append(self.middle_array[p-1] - self.middle_array[p-2])      
 
             
-            print("The value of root for n = {} is: {:.4f} ".format(p, middle))
             
-        print(middle)
+            print("O valor para n = {} é: {:.4f} \n".format(p, middle))
+            
+        print('c: {} \n'.format(middle) )
         
-        self.bis_array = np.array(middle_array)
-        self.tol_array = np.array(array)
+        self.bis_array = np.array(self.middle_array)
+        self.tol_array = np.array(tol_array)
+        print('tolerancias: ')
         print(self.tol_array)
-        print(self.bis_array)
+        print('\n')
+        #self.matrix = [self.n_array, self.a_array, self.b_array, self.middle_array]
+        #print(self.tol_array)
+        #print(self.bis_array)
 
-        return middle, middle_array
 
     def plot_func(self):
-        # 100 linearly spaced numbers
+        # 100 valores espaçados linearmente
         x = np.linspace(-5,5,200)
 
-        # the function, which is y = x^2 here
+        
         y = self.func(x)
 
-        # setting the axes at the centre
+        # prepando os axis da figura
         fig = plt.figure()
         ax = fig.add_subplot(2, 2, 1)
         ax.spines['left'].set_position('center')
@@ -83,7 +105,7 @@ class Bisect_class:
         ax.xaxis.set_ticks_position('bottom')
         ax.yaxis.set_ticks_position('left')
 
-        # plot the function
+        # plota a função
         plt.plot(x, y, 'r')
         plt.plot(self.tol_array, self.bis_array)
 
@@ -95,3 +117,16 @@ class Bisect_class:
 
         # show the plot
         plt.show()
+
+    # (transpõe a matriz)
+    def trans_matrix(self):
+        print()
+        for i in range(len(self.n_array)):
+
+            self.matrix.append([self.n_array[i], self.a_array[i], self.b_array[i], self.middle_array[i], self.epsilon_array[i]])
+
+        print("|  n  |  a  |  b  |  X  | epsilon  |")
+        for p in self.matrix:  
+            np.array(p)
+            print(p)
+    
